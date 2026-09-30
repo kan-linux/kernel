@@ -5,6 +5,8 @@ UTS_MACHINE=$1
 CC_VERSION="$2"
 LD=$3
 
+CC_VERSION=$(echo "$CC_VERSION" | sed -e 's/(Ubuntu [^)]*)/()/g' -e 's/()/GCC/' -e 's/  */ /g')
+
 if test -z "$KBUILD_BUILD_USER"; then
 	LINUX_COMPILE_BY=$(whoami | sed 's/\\/\\\\/')
 else
@@ -17,7 +19,9 @@ else
 fi
 
 LD_VERSION=$(LC_ALL=C $LD -v | head -n1 |
-		sed -e 's/(compatible with [^)]*)//' -e 's/[[:space:]]*$//')
+		sed -e 's/(compatible with [^)]*)//' \
+		    -e 's/(GNU Binutils for [^)]*)/(GNU Binutils)/' \
+		    -e 's/[[:space:]]*$//')
 
 cat <<EOF
 #define UTS_MACHINE		"${UTS_MACHINE}"
